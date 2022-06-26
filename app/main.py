@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 from fastapi import FastAPI
 
 from app.routers import messages, rooms, users
