@@ -11,6 +11,6 @@ app = FastAPI(title='Test')
 async def initialize_db():
   await create_tables()
 
-app.include_router(messages.router)
-app.include_router(rooms.router)
+#app.include_router(messages.router)
+#app.include_router(rooms.router)
 app.include_router(users.router)

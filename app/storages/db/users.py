@@ -3,58 +3,68 @@ from app.models.db.users import UserDb
 from app.models.domain.user import User
 from app.storages.base.users import (AsyncUsersStorage, UserAlreadyExistError,
                                      UserNotFoundError)
+from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.orm.session import Session
 
 
 class AsyncDBUsersStorage(AsyncUsersStorage):
-  def __init__(self, session: Session):
-    self.__session: Session = session
+  def __init__(self, session: AsyncSession):
+    self.__session: AsyncSession = session
 
   async def find_by_email(self, email: str) -> User:
+    query_result = await self.__session.execute(
+      select(UserDb)
+      .where(UserDb.email == email)
+    )
     try:
-      user_dto = await self.__session.execute(
-        select(UserDb)
-        .where(UserDb.email == email)
-        .one()
-      )
+      user_db = query_result.scalars().one()
     except NoResultFound:
       raise UserNotFoundError
 
-    return user_dto.to_entity()
+    return user_db.to_entity()
 
   async def find_by_id(self, id: str) -> User:
+    """ Details of bad implementation of DB storage
+        id - string, but User.pk is integer primary key.
+        So mimic like we cannot find user with id == 'Jason'
+    """
     try:
       pk=int(id)
     except ValueError:
       raise UserNotFoundError
 
+    query_result = await self.__session.execute(
+      select(UserDb)
+      .where(UserDb.pk == pk)
+    )
     try:
-      user_dto = await self.__session.execute(
-        select(UserDb)
-        .where(UserDb.pk == pk)
-        .one()
-      )
+      user_db = query_result.scalars().one()
     except NoResultFound:
       raise UserNotFoundError
-
-    return user_dto.to_entity()
+    
+    return user_db.to_entity()
 
   async def create(self, user: User) -> User:
-    user_dto = UserDb.from_entity(user)
-    await self.__session.add(user_dto)
-    return user_dto.to_entity()
+    user_db = UserDb.from_entity(user)
+    self.__session.add(user_db)
+    try:
+      await self.__session.flush()
+    except IntegrityError:
+      raise UserAlreadyExistError
 
-  async def fetch_all(self) -> list[User]:
-    user_dtos = await self.__session.execute(
+    return await self.find_by_email(user.email)
+
+  async def fetch_page(self, page_size: int, skip: int) -> list[User]:
+    query_result = await self.__session.execute(
       select(UserDb)
       .order_by(UserDb.pk)
-      .limit(1000)
-      .all()
+      .limit(page_size)
+      .offset(skip)
     )
+    user_dbs = query_result.scalars().all()
+    if not user_dbs:
+      raise UserNotFoundError
 
-    if not user_dtos:
-      return []
-
-    return list(map(lambda user_dto: user_dto.to_entity(), user_dtos))
+    # maybe a little heavy for async? 
+    return list(map(lambda user_db: user_db.to_entity(), user_dbs))

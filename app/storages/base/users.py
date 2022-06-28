@@ -18,7 +18,8 @@ class AsyncUsersStorage(ABC):
     raise NotImplementedError
 
   @abstractmethod
-  async def fetch_all(self) -> list[User]:
+  async def fetch_page(self, page_size: int, skip: int) -> list[User]:
+    """ instead of this function we need func"""
     raise NotImplementedError
 
 
