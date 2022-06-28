@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
+from app.models.db.base import BaseDBModel
 from sqlalchemy import Column, Integer
-from sqlalchemy.ext.declarative import declarative_base
 
 
-Base = declarative_base()
-
-class Rooms(Base):
+class RoomDb(BaseDBModel):
   __tablename__ = 'rooms'
 
   pk = Column(
     Integer,
     primary_key=True,
-    index=True
+    autoincrement=True,
+    index=True,
   )
