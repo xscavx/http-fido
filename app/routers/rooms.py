@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-from fastapi import APIRouter
+from app.dependencides import verify_authorization_header
+from fastapi import APIRouter, Depends
 
 
-router = APIRouter()
+router = APIRouter(
+  dependencies=[Depends(verify_authorization_header)],
+  tags=['rooms']
+)
 
 
 @router.post('/rooms')
