@@ -1,19 +1,15 @@
 # -*- coding: utf-8 -*-
-from app.database import AsyncDBSession
+from app.dependencides import check_authorization_header, prepare_users_storage
 from app.models.domain.user import User
 from app.storages.base.users import (AsyncUsersStorage, UserAlreadyExistError,
                                      UserNotFoundError)
-from app.storages.db.users import AsyncDBUsersStorage
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from pydantic import EmailStr
 
 
-async def prepare_users_storage() -> AsyncUsersStorage:
-  async with AsyncDBSession.begin() as session:
-    yield AsyncDBUsersStorage(session=session)
-
-
-router = APIRouter()
+router = APIRouter(
+  dependencies=[Depends(check_authorization_header)]
+)
 
 
 @router.post(
@@ -31,7 +27,7 @@ async def create_user(
   except UserAlreadyExistError as ex:
     raise HTTPException(
       status_code=status.HTTP_409_CONFLICT,
-      detail=ex.message,
+      detail=ex.message
     )
 
 
@@ -40,21 +36,23 @@ async def create_user(
   response_model=list[User]
 )
 async def list_all_users(
-  users_storage: AsyncUsersStorage = Depends(prepare_users_storage),
   page_size: int = Query(default=1000, ge=10, le=10000),
-  skip: int = Query(default=0, ge=0)
+  skip: int = Query(default=0, ge=0),
+  users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
 ):
   try:
     return await users_storage.fetch_page(page_size=page_size, skip=skip)
   except UserNotFoundError as ex:
     raise HTTPException(
       status_code=status.HTTP_404_NOT_FOUND,
-      detail=ex.message,
+      detail=ex.message
     )
 
 
 @router.get('/users/me')
-async def get_me():
+async def get_me(
+  users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
+):
   raise NotImplementedError
 
 
@@ -71,5 +69,5 @@ async def get_user(
   except UserNotFoundError as ex:
     raise HTTPException(
       status_code=status.HTTP_404_NOT_FOUND,
-      detail=ex.message,
+      detail=ex.message
     )

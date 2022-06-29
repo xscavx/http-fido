@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-from fastapi import APIRouter
+from app.dependencides import check_authorization_header
+from fastapi import APIRouter, Depends
 
 
-router = APIRouter()
+router = APIRouter(
+  dependencies=[Depends(check_authorization_header)]
+)
+
 
 @router.post('/users/{user_id}/messages')
 async def create_user_message(message: str):
