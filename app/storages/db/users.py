@@ -67,4 +67,4 @@ class AsyncDBUsersStorage(AsyncUsersStorage):
       raise UserNotFoundError
 
     # maybe a little heavy for async? 
-    return list(map(lambda user_db: user_db.to_entity(), user_dbs))
+    return [user_db.to_entity() for user_db in user_dbs]
