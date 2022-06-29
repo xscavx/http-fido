@@ -1,34 +1,15 @@
 # -*- coding: utf-8 -*-
-from app.dependencides import check_authorization_header, prepare_users_storage
+from app.dependencides import (prepare_users_storage,
+                               verify_authorization_header)
 from app.models.domain.user import User
-from app.storages.base.users import (AsyncUsersStorage, UserAlreadyExistError,
-                                     UserNotFoundError)
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
-from pydantic import EmailStr
+from app.storages.base.users import AsyncUsersStorage, UserNotFoundError
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 
 router = APIRouter(
-  dependencies=[Depends(check_authorization_header)]
+  dependencies=[Depends(verify_authorization_header)],
+  tags=['users']
 )
-
-
-@router.post(
-  '/users',
-  response_model=User
-)
-async def create_user(
-  email: EmailStr = Body(),
-  users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
-):
-  try:
-    return await users_storage.create(
-      User(email=email)
-    )
-  except UserAlreadyExistError as ex:
-    raise HTTPException(
-      status_code=status.HTTP_409_CONFLICT,
-      detail=ex.message
-    )
 
 
 @router.get(
