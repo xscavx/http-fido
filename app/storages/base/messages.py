@@ -1,18 +1,24 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, abstractmethod
 
-from app.models.domain.message import DialogMessage, RoomMessage
+from app.models.domain.message import MessageUnsentModel, MessageReadModel
 
 
 class AsyncMessagesStorage(ABC):
   @abstractmethod
-  async def create_dialog_message(self,
-                                  messages: DialogMessage) -> DialogMessage:
+  async def create_dialog_message(
+    self,
+    recipient_id: str,
+    message: MessageUnsentModel
+  ) -> MessageReadModel:
     raise NotImplementedError
 
   @abstractmethod
-  async def create_room_message(self,
-                                message: RoomMessage) -> RoomMessage:
+  async def create_room_message(
+    self,
+    room_id: str,
+    message: MessageUnsentModel
+  ) -> MessageReadModel:
     raise NotImplementedError
 
   @abstractmethod
@@ -22,7 +28,7 @@ class AsyncMessagesStorage(ABC):
     recipient_id: str,
     skip: int,
     limit: int
-  ) -> list[DialogMessage]:
+  ) -> list[MessageReadModel]:
     raise NotImplementedError
 
   @abstractmethod
@@ -31,5 +37,5 @@ class AsyncMessagesStorage(ABC):
     room_id: str,
     skip: int,
     limit: int
-  ) -> list[RoomMessage]:
+  ) -> list[MessageReadModel]:
     raise NotImplementedError
