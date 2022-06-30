@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-from app.models.domain.room import Room
-from app.models.domain.user import User
-
 from pydantic import BaseModel
 
 
-class Message(BaseModel):
-  id: str
+class BaseMessage(BaseModel):
+  id: str | None = None
   text: str
-  sender_id: User
-  receiver_id: User | Room
+  sender_id: str
+
+
+class DialogMessage(BaseMessage):
+  receiver_id: str
+
+
+class RoomMessage(BaseMessage):
+  room_id: str
