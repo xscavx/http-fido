@@ -17,12 +17,12 @@ router = APIRouter(
   response_model=list[User]
 )
 async def list_all_users(
-  page_size: int = Query(default=1000, ge=10, le=10000),
   skip: int = Query(default=0, ge=0),
+  limit: int = Query(default=1000, ge=10, le=10000),
   users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
 ):
   try:
-    return await users_storage.fetch_page(page_size=page_size, skip=skip)
+    return await users_storage.fetch_page(limit=limit, skip=skip)
   except UserNotFoundError as ex:
     raise HTTPException(
       status_code=status.HTTP_404_NOT_FOUND,
