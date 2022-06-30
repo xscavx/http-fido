@@ -2,15 +2,15 @@
 from pydantic import BaseModel
 
 
-class BaseMessage(BaseModel):
-  id: str | None = None
+class MessageUnsentModel(BaseModel):
   text: str
   sender_id: str
 
 
-class DialogMessage(BaseMessage):
-  receiver_id: str
+class MessageReadModel(MessageUnsentModel):
+  id: str
+  recipient_id: str | None
+  room_id: str | None
 
-
-class RoomMessage(BaseMessage):
-  room_id: str
+  class Config:
+    orm_mode = True

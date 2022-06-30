@@ -22,7 +22,7 @@ class UserDb(BaseDBModel):
 
   @property
   def id(self):
-    return str(self.pk)
+    return None if self.pk is None else str(self.pk)
 
   def to_entity(self) -> User:
     return User(
