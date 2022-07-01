@@ -8,13 +8,13 @@ from sqlalchemy import Column, ForeignKey, Integer
 class RoomUserDb(BaseDBModel):
   __tablename__ = 'rooms_users'
 
-  room = Column(
+  room_pk = Column(
     Integer,
     ForeignKey(RoomDb.pk),
     primary_key=True,
     index=True
   )
-  user = Column(
+  user_pk = Column(
     Integer,
     ForeignKey(UserDb.pk),
     primary_key=True,

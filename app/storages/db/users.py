@@ -12,7 +12,7 @@ class AsyncDBUsersStorage(AsyncUsersStorage):
   def __init__(self, session: AsyncSession):
     self.__session: AsyncSession = session
 
-  async def find_by_email(self, email: str) -> User:
+  async def try_find_by_email(self, email: str) -> User:
     query_result = await self.__session.execute(
       select(UserDb)
       .where(UserDb.email == email)
@@ -24,7 +24,7 @@ class AsyncDBUsersStorage(AsyncUsersStorage):
 
     return user_db.to_entity()
 
-  async def find_by_id(self, id: str) -> User:
+  async def try_find_by_id(self, id: str) -> User:
     """ Details of bad implementation of DB storage
         id - string, but User.pk is integer primary key.
         So mimic like we cannot find user with id == 'Jason'
@@ -53,7 +53,7 @@ class AsyncDBUsersStorage(AsyncUsersStorage):
     except IntegrityError:
       raise UserAlreadyExistError
 
-    return await self.find_by_email(user.email)
+    return await self.try_find_by_email(user.email)
 
   async def fetch_page(self, skip: int, limit: int) -> list[User]:
     query_result = await self.__session.execute(

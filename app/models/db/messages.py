@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from app.models.db.base import BaseDBModel
+from app.models.db.common import try_cast_participant_id
 from app.models.db.rooms import RoomDb
 from app.models.db.users import UserDb
-from app.models.domain.message import MessageReadModel, MessageUnsentModel
+from app.models.domain.message import MessageInsertModel, MessageReadModel
 from sqlalchemy import (CheckConstraint, Column, DateTime, ForeignKey, Integer,
                         String, func)
 
@@ -25,18 +26,18 @@ class MessageDb(BaseDBModel):
     String,
     nullable=False
   )
-  sender_id = Column(
+  sender_pk = Column(
     Integer,
     ForeignKey(UserDb.pk),
     nullable=False,
     index=True
   )
-  recipient_id = Column(
+  recipient_pk = Column(
     Integer,
     ForeignKey(UserDb.pk),
     index=True
   )
-  room_id = Column(
+  room_pk = Column(
     Integer,
     ForeignKey(RoomDb.pk),
     index=True
@@ -44,20 +45,26 @@ class MessageDb(BaseDBModel):
 
   __table_args__ = (
     CheckConstraint(
-      'recipient_id IS NOT NULL XOR room_id IS NOT NULL'
+      '(recipient_pk IS NOT NULL AND room_pk IS NULL)'
+      'OR'
+      '(recipient_pk IS NULL AND room_pk IS NULL)'
     ),
   )
 
-  @property
-  def id(self):
-    return None if self.pk is None else str(self.pk)
-
   def to_entity(self) -> MessageReadModel:
-    return MessageReadModel(self)
+    return MessageReadModel(
+      id=str(self.pk),
+      text=self.text,
+      sender_id=str(self.sender_pk),
+      recipient_id=str(self.recipient_pk),
+      room_id=str(self.room_pk)
+    )
 
   @staticmethod
-  def from_entity(entity: MessageUnsentModel) -> "MessageDb":
+  def from_entity(entity: MessageInsertModel) -> "MessageDb":
     return MessageDb(
       text=entity.text,
-      sender_user=entity.sender_id
+      sender_pk=try_cast_participant_id(entity.sender_id),
+      recipient_pk=try_cast_participant_id(entity.recipient_id),
+      room_pk=try_cast_participant_id(entity.room_id)
     )
