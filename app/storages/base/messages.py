@@ -11,20 +11,13 @@ class AsyncMessagesStorage(ABC):
 
   @abstractmethod
   async def fetch_dialog_recent(
-    self,
-    sender_id: str,
-    recipient_id: str,
-    skip: int,
-    limit: int
+    self, sender_id: str, recipient_id: str, skip: int, limit: int
   ) -> list[MessageReadModel]:
     raise NotImplementedError
 
   @abstractmethod
   async def fetch_room_recent(
-    self,
-    room_id: str,
-    skip: int,
-    limit: int
+    self, room_id: str, skip: int, limit: int
   ) -> list[MessageReadModel]:
     raise NotImplementedError
 
