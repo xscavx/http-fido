@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from app.models.db.base import BaseDBModel
+from app.models.db.common import try_cast_participant_id
 from app.models.db.rooms import RoomDb
 from app.models.db.users import UserDb
-from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
+from app.models.domain.message import MessageInsertModel, MessageReadModel
+from sqlalchemy import (CheckConstraint, Column, DateTime, ForeignKey, Integer,
+                        String, func)
 
 
 class MessageDb(BaseDBModel):
@@ -12,24 +15,29 @@ class MessageDb(BaseDBModel):
     Integer,
     primary_key=True,
     autoincrement=True,
-    index=True,
+    index=True
+  )
+  created_at = Column(
+    DateTime(timezone=True),
+    server_default=func.now(),
+    nullable=False
   )
   text = Column(
     String,
     nullable=False
   )
-  sender_user = Column(
+  sender_pk = Column(
     Integer,
     ForeignKey(UserDb.pk),
     nullable=False,
     index=True
   )
-  recipient_user = Column(
+  recipient_pk = Column(
     Integer,
     ForeignKey(UserDb.pk),
     index=True
   )
-  recipient_room = Column(
+  room_pk = Column(
     Integer,
     ForeignKey(RoomDb.pk),
     index=True
@@ -37,6 +45,26 @@ class MessageDb(BaseDBModel):
 
   __table_args__ = (
     CheckConstraint(
-      'recipient_user IS NOT NULL OR recipient_room IS NOT NULL'
+      '(recipient_pk IS NOT NULL AND room_pk IS NULL)'
+      'OR'
+      '(recipient_pk IS NULL AND room_pk IS NULL)'
     ),
   )
+
+  def to_entity(self) -> MessageReadModel:
+    return MessageReadModel(
+      id=str(self.pk),
+      text=self.text,
+      sender_id=str(self.sender_pk),
+      recipient_id=str(self.recipient_pk),
+      room_id=str(self.room_pk)
+    )
+
+  @staticmethod
+  def from_entity(entity: MessageInsertModel) -> "MessageDb":
+    return MessageDb(
+      text=entity.text,
+      sender_pk=try_cast_participant_id(entity.sender_id),
+      recipient_pk=try_cast_participant_id(entity.recipient_id),
+      room_pk=try_cast_participant_id(entity.room_id)
+    )

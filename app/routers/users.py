@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from app.dependencides import (prepare_users_storage,
-                               verify_authorization_header)
+from app.dependencies import (QueryPagination, get_authorized_user,
+                              prepare_users_storage)
 from app.models.domain.user import User
 from app.storages.base.users import AsyncUsersStorage, UserNotFoundError
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 
 router = APIRouter(
-  dependencies=[Depends(verify_authorization_header)],
+  dependencies=[Depends(get_authorized_user)],
   tags=['users']
 )
 
@@ -17,12 +17,14 @@ router = APIRouter(
   response_model=list[User]
 )
 async def list_all_users(
-  skip: int = Query(default=0, ge=0),
-  limit: int = Query(default=1000, ge=10, le=10000),
+  pagination: QueryPagination = Depends(),
   users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
 ):
   try:
-    return await users_storage.fetch_page(limit=limit, skip=skip)
+    return await users_storage.fetch_page(
+      skip=pagination.skip,
+      limit=pagination.limit
+    )
   except UserNotFoundError as ex:
     raise HTTPException(
       status_code=status.HTTP_404_NOT_FOUND,
@@ -32,9 +34,10 @@ async def list_all_users(
 
 @router.get('/users/me')
 async def get_me(
+  current_user: User = Depends(get_authorized_user),
   users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
 ):
-  raise NotImplementedError
+  return current_user
 
 
 @router.get(
@@ -46,7 +49,7 @@ async def get_user(
   users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
 ):
   try:
-    return await users_storage.find_by_id(user_id)
+    return await users_storage.try_find_by_id(user_id)
   except UserNotFoundError as ex:
     raise HTTPException(
       status_code=status.HTTP_404_NOT_FOUND,

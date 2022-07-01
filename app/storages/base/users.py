@@ -6,11 +6,11 @@ from app.models.domain.user import User
 
 class AsyncUsersStorage(ABC):
   @abstractmethod
-  async def find_by_email(self, email: str) -> User:
+  async def try_find_by_email(self, email: str) -> User:
     raise NotImplementedError
 
   @abstractmethod
-  async def find_by_id(self, id: str) -> User:
+  async def try_find_by_id(self, id: str) -> User:
     raise NotImplementedError
 
   @abstractmethod

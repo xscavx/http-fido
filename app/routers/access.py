@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from app.dependencides import (prepare_users_storage,
-                               verify_authorization_header)
+from app.dependencies import prepare_users_storage
 from app.models.domain.user import User
-from app.storages.base.users import AsyncUsersStorage, UserAlreadyExistError, UserNotFoundError
+from app.storages.base.users import (AsyncUsersStorage, UserAlreadyExistError,
+                                     UserNotFoundError)
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
 
@@ -44,7 +44,7 @@ async def authorize_user(
   users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
 ):
   try:
-    await users_storage.find_by_email(email)
+    await users_storage.try_find_by_email(email)
   except UserNotFoundError as ex:
     raise HTTPException(
       status_code=status.HTTP_401_UNAUTHORIZED,

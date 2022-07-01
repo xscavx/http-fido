@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from app.dependencides import verify_authorization_header
+from app.dependencies import get_authorized_user
 from fastapi import APIRouter, Depends
 
 
 router = APIRouter(
-  dependencies=[Depends(verify_authorization_header)],
+  dependencies=[Depends(get_authorized_user)],
   tags=['rooms']
 )
 
