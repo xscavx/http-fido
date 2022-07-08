@@ -3,8 +3,8 @@ from pydantic import BaseModel, EmailStr
 
 
 class User(BaseModel):
-  id: str | None = None
-  email: EmailStr
+    id: str | None = None
+    email: EmailStr
 
-  class Config:
-    orm_mode = True
+    class Config:
+        orm_mode = True
