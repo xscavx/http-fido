@@ -1,51 +1,19 @@
-import asyncio
-from imp import new_module
-from os import environ as env
-
+# -*- coding: utf-8 -*-
 import pytest
-from app.database import create_db_engine, create_tables, drop_tables
 from app.models.db.users import UserDb
 from app.models.domain.user import User
 from app.storages.base.users import AsyncUsersStorage, UserNotFoundError
 from app.storages.db.users import AsyncDBUsersStorage
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import sessionmaker
+
+from .common_fixtures import (event_loop, f_db_engine, f_db_session_maker,
+                              f_prepare_tables)
 
 DB_SIZE_RECORDS = 1000 + 213
 
 
 @pytest.fixture(scope='session')
-def event_loop():
-  loop = asyncio.get_event_loop()
-  yield loop
-  loop.close()
-
-
-@pytest.fixture(scope='session')
-def f_db_engine():
-  return create_db_engine(
-    db_user=env.get('FIDO_TEST_DB_USER'),
-    db_password=env.get('FIDO_TEST_DB_PASSWORD'),
-    db_host=env.get('FIDO_TEST_DB_HOST'),
-    db_name=env.get('FIDO_TEST_DB_NAME')
-  )
-
-
-@pytest.fixture(scope='session')
-def f_db_session_maker(f_db_engine):
-  return sessionmaker(
-    f_db_engine,
-    expire_on_commit=False,
-    class_=AsyncSession
-  )
-
-
-@pytest.fixture(scope='session')
-async def f_setup_database(f_db_engine, f_db_session_maker):
-  await drop_tables(f_db_engine)
-  await create_tables(f_db_engine)
-
+async def f_setup_database(f_prepare_tables, f_db_session_maker):
   users_gen = (
     {'email': f'user{idx}@domain{idx}.org'}
     for idx in range(DB_SIZE_RECORDS)
@@ -54,10 +22,6 @@ async def f_setup_database(f_db_engine, f_db_session_maker):
     for user in users_gen:
       session.add(UserDb(**user))
     await session.flush()
-
-  yield
-
-  await drop_tables(f_db_engine)
 
 
 @pytest.fixture
