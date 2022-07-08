@@ -17,3 +17,6 @@ class RoomDb(BaseDBModel):
   )
 
   participants = relationship(UserDb, secondary=rooms_users_table)
+
+
+__all__ = ['RoomDb']

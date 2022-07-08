@@ -68,3 +68,6 @@ class MessageDb(BaseDBModel):
       recipient_pk=try_cast_participant_id(entity.recipient_id),
       room_pk=try_cast_participant_id(entity.room_id)
     )
+
+
+__all__ = ['MessageDb']

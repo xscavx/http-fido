@@ -54,3 +54,7 @@ async def recreate_tables(engine):
   async with engine.begin() as conn:
     await conn.run_sync(BaseDBModel.metadata.drop_all)
     await conn.run_sync(BaseDBModel.metadata.create_all)
+
+
+__all__ = ['create_db_engine', 'engine', 'AsyncDBSession',
+           'create_tables', 'drop_tables', 'recreate_tables']

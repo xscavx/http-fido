@@ -8,3 +8,6 @@ class User(BaseModel):
 
   class Config:
     orm_mode = True
+
+
+__all__ = ['User']

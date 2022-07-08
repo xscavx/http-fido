@@ -31,3 +31,6 @@ class UserDb(BaseDBModel):
     return UserDb(
       email=entity.email
     )
+
+
+__all__ = ['UserDb']

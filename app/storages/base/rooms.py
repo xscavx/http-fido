@@ -30,3 +30,6 @@ class RoomAlreadyExistError(Exception):
 
   def __str__(self):
     return RoomAlreadyExistError.message
+
+
+__all__ = ['AsyncRoomsStorage', 'RoomNotFoundError', 'RoomAlreadyExistError']

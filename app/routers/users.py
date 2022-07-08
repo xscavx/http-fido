@@ -54,3 +54,6 @@ async def get_user(
       status_code=status.HTTP_404_NOT_FOUND,
       detail=ex.message
     )
+
+
+__all__ = ['router']

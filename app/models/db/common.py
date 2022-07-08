@@ -16,3 +16,6 @@ def try_cast_participant_id(participant_id: str | None):
     return int(participant_id)
   except ValueError:
     raise InvalidParticipantIdError
+
+
+__all__ = ['InvalidParticipantIdError', 'try_cast_participant_id']

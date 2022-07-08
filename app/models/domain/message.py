@@ -18,3 +18,6 @@ class MessageReadModel(MessageInsertModel):
 
   class Config:
     orm_mode = True
+
+
+__all__ = ['MessageContentModel', 'MessageInsertModel', 'MessageReadModel']
