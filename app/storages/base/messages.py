@@ -27,6 +27,3 @@ class MessageNotFoundError(Exception):
 
   def __str__(self):
     return MessageNotFoundError.message
-
-
-__all__ = ['AsyncMessagesStorage', 'MessageNotFoundError']

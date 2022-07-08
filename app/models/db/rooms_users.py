@@ -21,5 +21,3 @@ rooms_users_table = Table(
     index=True
   )
 )
-
-__all__ = ['rooms_users_table']

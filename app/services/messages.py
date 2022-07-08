@@ -55,6 +55,3 @@ class AsyncMessagesService:
   ) -> list[MessageReadModel]:
     # await self.__rooms.try_find_by_id(room_id)
     return await self.__storage.fetch_room_recent(room_id, skip, limit)
-
-
-__all__ = ['AsyncMessagesService']

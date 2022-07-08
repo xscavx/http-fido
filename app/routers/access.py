@@ -52,6 +52,3 @@ async def authorize_user(
     )
   # assess token is just an email string
   return {'access_token': email}
-
-
-__all__ = ['router']

@@ -7,6 +7,3 @@ from pydantic import BaseModel
 class Room(BaseModel):
   id: str
   participants: list[User]
-
-
-__all__ = ['Room']

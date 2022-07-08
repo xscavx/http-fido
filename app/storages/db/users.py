@@ -68,6 +68,3 @@ class AsyncDBUsersStorage(AsyncUsersStorage):
 
     # maybe a little heavy for async? 
     return [user_db.to_entity() for user_db in user_dbs]
-
-
-__all__ = ['AsyncDBUsersStorage']

@@ -94,6 +94,3 @@ async def fetch_room_recent(
       status_code=status.HTTP_404_NOT_FOUND,
       detail=ex.message
     )
-
-
-__all__ = ['router']

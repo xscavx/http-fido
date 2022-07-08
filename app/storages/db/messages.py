@@ -83,6 +83,3 @@ class AsyncDBMessagesStorage(AsyncMessagesStorage):
       session=self.__session,
       select_query=select_query
     )
-
-
-__all__ = ['AsyncDBMessagesStorage']

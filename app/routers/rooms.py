@@ -27,6 +27,3 @@ async def get_room(room_id: str):
 @router.get('/rooms/{room_id}/users')
 async def list_room_users(room_id: str):
   raise NotImplementedError
-
-
-__all__ = ['router']
