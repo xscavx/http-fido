@@ -20,13 +20,9 @@ class UserDb(BaseDBModel):
     unique=True
   )
 
-  @property
-  def id(self):
-    return None if self.pk is None else str(self.pk)
-
   def to_entity(self) -> User:
     return User(
-      id=self.id,
+      id=str(self.pk),
       email=self.email
     )
 

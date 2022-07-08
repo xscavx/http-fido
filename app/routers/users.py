@@ -21,7 +21,7 @@ async def list_all_users(
   users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
 ):
   try:
-    return await users_storage.fetch_page(
+    return await users_storage.fetch_all(
       skip=pagination.skip,
       limit=pagination.limit
     )
@@ -34,8 +34,7 @@ async def list_all_users(
 
 @router.get('/users/me')
 async def get_me(
-  current_user: User = Depends(get_authorized_user),
-  users_storage: AsyncUsersStorage = Depends(prepare_users_storage)
+  current_user: User = Depends(get_authorized_user)
 ):
   return current_user
 

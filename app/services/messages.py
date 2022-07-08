@@ -54,4 +54,4 @@ class AsyncMessagesService:
     self, room_id: str, skip: int, limit: int
   ) -> list[MessageReadModel]:
     # await self.__rooms.try_find_by_id(room_id)
-    return await self.__storage.fetch_dialog_recent(room_id, skip, limit)
+    return await self.__storage.fetch_room_recent(room_id, skip, limit)

@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 from fastapi import FastAPI
 
-from app.database import create_tables
+from app.database import recreate_tables, engine
 from app.routers import access, messages, rooms, users
 
 
 app = FastAPI(title='Test')
 
+"""
 @app.on_event('startup')
 async def initialize_db():
-  await create_tables()
+  await recreate_tables(engine)
+"""
 
 app.include_router(access.router)
 app.include_router(messages.router)

@@ -55,7 +55,7 @@ class AsyncDBUsersStorage(AsyncUsersStorage):
 
     return await self.try_find_by_email(user.email)
 
-  async def fetch_page(self, skip: int, limit: int) -> list[User]:
+  async def fetch_all(self, skip: int, limit: int) -> list[User]:
     query_result = await self.__session.execute(
       select(UserDb)
       .order_by(UserDb.pk)

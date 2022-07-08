@@ -5,7 +5,17 @@ from app.models.domain.room import Room
 
 
 class AsyncRoomsStorage(ABC):
-  pass
+  @abstractmethod
+  async def try_find_by_id(self, id: str) -> Room:
+    raise NotImplementedError
+
+  @abstractmethod
+  async def create(self, user: Room) -> Room:
+    raise NotImplementedError
+
+  @abstractmethod
+  async def fetch_all(self, skip: int, limit: int) -> list[Room]:
+    raise NotImplementedError
 
 
 class RoomNotFoundError(Exception):

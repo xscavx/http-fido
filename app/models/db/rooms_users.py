@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 from app.models.db.base import BaseDBModel
-from app.models.db.rooms import RoomDb
-from app.models.db.users import UserDb
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import Column, ForeignKey, Integer, Table
 
 
-class RoomUserDb(BaseDBModel):
-  __tablename__ = 'rooms_users'
-
-  room_pk = Column(
+rooms_users_table = Table(
+  'rooms_users',
+  BaseDBModel.metadata,
+  Column(
+    'room_pk',
     Integer,
-    ForeignKey(RoomDb.pk),
+    ForeignKey('rooms.pk'),
+    primary_key=True,
+    index=True
+  ),
+  Column(
+    'user_pk',
+    Integer,
+    ForeignKey('users.pk'),
     primary_key=True,
     index=True
   )
-  user_pk = Column(
-    Integer,
-    ForeignKey(UserDb.pk),
-    primary_key=True,
-    index=True
-  )
+)
