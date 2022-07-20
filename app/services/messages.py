@@ -37,7 +37,6 @@ class AsyncMessagesService:
     ) -> None:
         await self.__users.try_find_by_id(sender_id)
         # await self.__rooms.try_find_by_id(room_id)
-
         return await self.__storage.create(
             message=MessageInsertModel(
                 **message.dict(), sender_id=sender_id, room_id=room_id

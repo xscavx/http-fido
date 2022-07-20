@@ -6,11 +6,11 @@ from app.routers import access, messages, rooms, users
 
 app = FastAPI(title="Test")
 
-"""
-@app.on_event('startup')
+
+@app.on_event("startup")
 async def initialize_db():
-  await recreate_tables(engine)
-"""
+    await recreate_tables(engine)
+
 
 app.include_router(access.router)
 app.include_router(messages.router)

@@ -30,7 +30,7 @@ async def get_authorized_user(
     try:
         # assess token is just email string
         return await users_storage.try_find_by_email(access_token)
-    except UserNotFoundError as ex:
+    except UserNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
         )

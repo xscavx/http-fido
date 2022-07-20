@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.models.db.base import BaseDBModel
 
-""" 
+"""
   imports below are only for one reason - force sqlalchemy to create all models
   not a production code
 """
