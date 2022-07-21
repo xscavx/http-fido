@@ -19,10 +19,10 @@ def event_loop():
 @pytest.fixture(scope="session")
 def f_db_engine():
     return create_db_engine(
-        db_user=env.get("FIDO_TEST_DB_USER"),
-        db_password=env.get("FIDO_TEST_DB_PASSWORD"),
-        db_host=env.get("FIDO_TEST_DB_HOST"),
-        db_name=env.get("FIDO_TEST_DB_NAME"),
+        db_user=env["FIDO_TEST_DB_USER"],
+        db_password=env["FIDO_TEST_DB_PASSWORD"],
+        db_host=env["FIDO_TEST_DB_HOST"],
+        db_name=env["FIDO_TEST_DB_NAME"],
     )
 
 

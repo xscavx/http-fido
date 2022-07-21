@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from typing import AsyncGenerator
+
 from fastapi import Depends, Header, HTTPException, Query, status
 
 from app.database import AsyncDBSession
@@ -9,7 +11,7 @@ from app.storages.db.messages import AsyncDBMessagesStorage
 from app.storages.db.users import AsyncDBUsersStorage
 
 
-async def prepare_messages_service() -> AsyncMessagesService:
+async def prepare_messages_service() -> AsyncGenerator[AsyncMessagesService, None]:
     async with AsyncDBSession.begin() as session:
         yield AsyncMessagesService(
             messages_storage=AsyncDBMessagesStorage(session=session),
@@ -18,7 +20,7 @@ async def prepare_messages_service() -> AsyncMessagesService:
         )
 
 
-async def prepare_users_storage() -> AsyncUsersStorage:
+async def prepare_users_storage() -> AsyncGenerator[AsyncUsersStorage, None]:
     async with AsyncDBSession.begin() as session:
         yield AsyncDBUsersStorage(session=session)
 

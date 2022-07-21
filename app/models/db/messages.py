@@ -39,7 +39,7 @@ class MessageDb(BaseDBModel):
     def to_entity(self) -> MessageReadModel:
         return MessageReadModel(
             id=str(self.pk),
-            text=self.text,
+            text=str(self.text),
             sender_id=str(self.sender_pk),
             recipient_id=str(self.recipient_pk),
             room_id=str(self.room_pk),

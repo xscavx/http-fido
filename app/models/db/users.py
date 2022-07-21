@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from pydantic import EmailStr
 from sqlalchemy import Column, Integer, String
 
 from app.models.db.base import BaseDBModel
@@ -12,7 +13,7 @@ class UserDb(BaseDBModel):
     email = Column(String, nullable=False, index=True, unique=True)
 
     def to_entity(self) -> User:
-        return User(id=str(self.pk), email=self.email)
+        return User(id=str(self.pk), email=EmailStr(self.email))
 
     @staticmethod
     def from_entity(entity: User) -> "UserDb":

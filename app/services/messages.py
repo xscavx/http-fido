@@ -14,11 +14,11 @@ class AsyncMessagesService:
         self,
         messages_storage: AsyncMessagesStorage,
         users_storage: AsyncUsersStorage,
-        rooms_storage: AsyncRoomsStorage = None,
+        rooms_storage: AsyncRoomsStorage | None,
     ):
         self.__storage: AsyncMessagesStorage = messages_storage
         self.__users: AsyncUsersStorage = users_storage
-        self.__rooms: AsyncRoomsStorage = rooms_storage
+        self.__rooms: AsyncRoomsStorage | None = rooms_storage
 
     async def create_dialog_message(
         self, sender_id: str, recipient_id: str, message: MessageContentModel

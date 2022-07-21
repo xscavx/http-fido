@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import pytest
-from sqlalchemy.future import select
+from typing import AsyncGenerator
 
-from app.models.db.messages import MessageDb
-from app.models.domain.message import MessageInsertModel, MessageReadModel
-from app.storages.base.messages import AsyncMessagesStorage, MessageNotFoundError
+import pytest
+
+from app.storages.base.messages import AsyncMessagesStorage
 from app.storages.db.messages import AsyncDBMessagesStorage
 
 
@@ -16,7 +15,9 @@ async def f_setup_database(f_prepare_tables, f_db_session_maker):
 
 
 @pytest.fixture
-async def f_users_db_storage(f_db_session_maker) -> AsyncMessagesStorage:
+async def f_users_db_storage(
+    f_db_session_maker,
+) -> AsyncGenerator[AsyncMessagesStorage, None]:
     async with f_db_session_maker.begin() as session:
         yield AsyncDBMessagesStorage(session=session)
 

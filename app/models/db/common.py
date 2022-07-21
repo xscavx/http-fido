@@ -8,7 +8,7 @@ class InvalidParticipantIdError(Exception):
         return InvalidParticipantIdError.message
 
 
-def try_cast_participant_id(participant_id: str | None):
+def try_cast_participant_id(participant_id: str | None) -> int | None:
     if participant_id is None:
         return None
 

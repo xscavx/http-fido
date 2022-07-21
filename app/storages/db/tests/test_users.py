@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from typing import AsyncGenerator
+
 import pytest
+from pydantic import EmailStr
 from sqlalchemy.future import select
 
 from app.models.db.users import UserDb
@@ -22,7 +25,9 @@ async def f_setup_database(f_prepare_tables, f_db_session_maker):
 
 
 @pytest.fixture
-async def f_users_db_storage(f_db_session_maker) -> AsyncUsersStorage:
+async def f_users_db_storage(
+    f_db_session_maker,
+) -> AsyncGenerator[AsyncUsersStorage, None]:
     async with f_db_session_maker.begin() as session:
         yield AsyncDBUsersStorage(session=session)
 
@@ -108,7 +113,7 @@ async def test_try_find_by_email(
 async def test_create_user(f_setup_database, f_db_session_maker, email: str):
     async with f_db_session_maker.begin() as create_session:
         users_storage = AsyncDBUsersStorage(session=create_session)
-        await users_storage.create(User(email=email))
+        await users_storage.create(User(email=EmailStr(email)))
 
     async with f_db_session_maker.begin() as read_session:
         query_result = await read_session.execute(
